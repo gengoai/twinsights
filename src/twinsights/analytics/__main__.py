@@ -1,3 +1,5 @@
+import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
@@ -29,6 +31,20 @@ class AnalyticsApp(App):
 
     def setup(self) -> None:
         self.project = self.parsed_global_args["project"]
+
+    @Command(help="Export")
+    def export(self):
+        with open(f"{self.project.name}.json", "w") as fp:
+            lines = []
+            with self.project.analytic_db as db:
+                for post in db.get_posts():
+                    t = re.sub("#[A-Za-z0-9_]+", "", post.text.content).strip()
+                    if t != "":
+                        lines.append({
+                            "text": t,
+                            "label": "Yes" if self.project.name == 'tw' else 'No'
+                        })
+            json.dump(lines, fp)
 
     @Command(help="Build commatrix")
     def build_comatrix(self,
