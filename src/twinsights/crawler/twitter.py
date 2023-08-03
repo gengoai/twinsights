@@ -133,7 +133,7 @@ class TweepyCrawler(Crawler):
             if q.since_id is not None and q.since_id != 'undefined':
                 search_options['since_id'] = int(q.since_id) + 1
 
-        return self.api.search(**search_options)
+        return self.api.search_tweets(**search_options)
 
     def __process_status(self,
                          status,
